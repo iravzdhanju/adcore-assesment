@@ -7,11 +7,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, debounceTime, switchMap } from 'rxjs/operators';
 import { Course, CourseService } from '../course.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -99,7 +99,15 @@ export class CourseListComponent implements OnInit {
       .get('searchControl')!
       .valueChanges.pipe(
         startWith(''),
-        map((value) => this._filter(value || ''))
+        debounceTime(300), // Add a debounce time to limit the number of API calls
+        switchMap((value) => {
+          this.currentPage = 1; // Reset to the first page on search
+          return this.courseService.getCourses(value || '', this.currentPage, this.itemsPerPage);
+        }),
+        map((courses) => {
+          this.courses = courses;
+          return this._filter(this.searchForm.get('searchControl')!.value || '');
+        })
       );
   }
 
@@ -113,18 +121,11 @@ export class CourseListComponent implements OnInit {
       .getCourses(searchTerm, this.currentPage, this.itemsPerPage)
       .subscribe((courses) => {
         this.courses = courses;
-        this.filteredOptions = this.searchForm
-          .get('searchControl')!
-          .valueChanges.pipe(
-            startWith(''),
-            map((value) => this._filter(value || ''))
-          );
       });
   }
 
   onSearch(event: Event): void {
     event.preventDefault();
-    this.currentPage = 1;
     this.loadCourses();
   }
 
@@ -186,6 +187,13 @@ export class CourseListComponent implements OnInit {
     return 0;
   }
 
+  onOptionSelected(event: MatAutocompleteSelectedEvent): void {
+    const selectedValue = event.option.value;
+    this.searchForm.get('searchControl')?.setValue(selectedValue);
+    this.currentPage = 1;
+    this.loadCourses();
+  }
+
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     const allOptions = this.courses.map((course) => course.course_name);
@@ -193,5 +201,15 @@ export class CourseListComponent implements OnInit {
     return uniqueOptions.filter((option) =>
       option.toLowerCase().includes(filterValue)
     );
+  }
+
+  clearSearch(): void {
+    this.searchForm.get('searchControl')?.setValue('');
+    this.loadCourses();
+  }
+
+  refreshTable(): void {
+    this.clearSearch();
+    this.loadCourses();
   }
 }

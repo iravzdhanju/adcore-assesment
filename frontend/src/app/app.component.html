@@ -11,7 +11,7 @@
       <button mat-icon-button (click)="sidenav.toggle()" *ngIf="isHandset$ | async">
         <mat-icon>menu</mat-icon>
       </button>
-      <span>{{ title }}</span>
+      <a mat-button routerLink="/" class="title-link">{{ title }}</a> <!-- Added -->
       <span class="spacer"></span>
       <nav *ngIf="!(isHandset$ | async)">
         <a mat-button routerLink="/courses" routerLinkActive="active">Courses</a>
@@ -23,9 +23,9 @@
       <router-outlet></router-outlet>
     </main>
 
-    
-    <!-- <mat-toolbar class="footer">
+    <mat-toolbar class="footer">
       <span>&copy; 2024 Course Management App</span>
-    </mat-toolbar> -->
+    </mat-toolbar>
+    
   </mat-sidenav-content>
 </mat-sidenav-container>
