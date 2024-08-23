@@ -12,6 +12,7 @@ import { Course, CourseService } from '../course.service';
 })
 export class CourseFormComponent {
   course: Course = {
+    _id: '',
     university: '',
     city: '',
     country: '',
@@ -49,6 +50,7 @@ export class CourseFormComponent {
       end_date: '',
       price: 0,
       currency: '',
+      _id: '',
     };
   }
 }

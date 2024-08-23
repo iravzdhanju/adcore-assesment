@@ -6,5 +6,4 @@ export const routes: Routes = [
   { path: '', redirectTo: '/courses', pathMatch: 'full' },
   { path: 'courses', component: CourseListComponent },
   { path: 'courses/new', component: CourseFormComponent },
-  { path: 'courses/edit/:id', component: CourseFormComponent }
 ];

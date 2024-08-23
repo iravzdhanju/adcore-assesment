@@ -35,8 +35,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# MongoDB Atlas connection
 
+# MongoDB Atlas connection
 username = urllib.parse.quote_plus(MONGODB_USERNAME)
 password = urllib.parse.quote_plus(MONGODB_PASSWORD)
 
@@ -44,20 +44,12 @@ MONGODB_URI = f"mongodb+srv://{username}:{password}@data-service.mypoi.mongodb.n
 
 try:
     client = MongoClient(MONGODB_URI, tlsCAFile=certifi.where())
-
-    # The ismaster command is cheap and does not require auth.
     client.admin.command('ismaster')
     print("Successfully connected to MongoDB")
-
-    # List all databases
-    print("Available databases:")
-    for db_name in client.list_database_names():
-        print(f"- {db_name}")
 
     db = client.courses_db
     courses_collection = db.courses
 
-    # Check if the collection exists
     if "courses" in db.list_collection_names():
         print(f"'courses' collection exists in 'courses_db'")
         print(f"Number of documents in 'courses' collection: {courses_collection.count_documents({})}")
@@ -89,12 +81,17 @@ class CourseInDB(Course):
 class Config:
     allow_population_by_field_name = True
 
+
 class CourseUpdate(BaseModel):
-    course_description: Optional[str] = None
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
-    price: Optional[float] = None
-    currency: Optional[str] = None
+    university: str | None = None
+    city: str | None = None
+    country: str | None = None
+    course_name: str | None = None
+    course_description: str | None = None
+    start_date: str | None = None
+    end_date: str | None = None
+    price: float | None = None
+    currency: str | None = None
 
 # Helper functions
 def fetch_and_update_data():
@@ -144,7 +141,6 @@ async def root():
     )
 
 # Routes
-
 @app.get("/courses", response_model=List[CourseInDB], tags=["Courses"])
 async def get_courses(
         search: str = Query(None, description="Search term for filtering courses"),
@@ -181,11 +177,20 @@ async def get_courses(
         currency=course["Currency"]
     ) for course in courses]
 
+
 @app.put("/courses/{course_id}", response_model=CourseInDB, tags=["Courses"])
 async def update_course(course_id: str, course_update: CourseUpdate):
     check_data_expiration()
 
     update_data = {}
+    if course_update.university:
+        update_data["University"] = course_update.university
+    if course_update.city:
+        update_data["City"] = course_update.city
+    if course_update.country:
+        update_data["Country"] = course_update.country
+    if course_update.course_name:
+        update_data["CourseName"] = course_update.course_name
     if course_update.course_description:
         update_data["CourseDescription"] = course_update.course_description
     if course_update.start_date:
@@ -226,7 +231,6 @@ async def delete_course(course_id: str):
     if result.deleted_count == 1:
         return {"success": True}
     raise HTTPException(status_code=404, detail="Course not found")
-
 
 @app.post("/courses", response_model=CourseInDB, tags=["Courses"])
 async def create_course(course: Course):

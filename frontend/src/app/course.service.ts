@@ -1,10 +1,9 @@
-import { Injectable, isDevMode } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
-
 export interface Course {
-  id?: string;
+  _id: string;
   university: string;
   city: string;
   country: string;
@@ -15,23 +14,13 @@ export interface Course {
   price: number;
   currency: string;
 }
-
 @Injectable({
   providedIn: 'root',
 })
 export class CourseService {
-  private apiUrl: string;
+  private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {
-    this.apiUrl = this.getApiUrl();
-  }
-  private getApiUrl(): string {
-    if (isDevMode()) {
-      return 'http://localhost:8000'; // Development API URL
-    } else {
-      return environment.apiUrl; // Production API URL
-    }
-  }
+  constructor(private http: HttpClient) {}
 
   getCourses(
     search?: string,
@@ -54,7 +43,18 @@ export class CourseService {
   }
 
   updateCourse(id: string, course: Partial<Course>): Observable<Course> {
-    return this.http.put<Course>(`${this.apiUrl}/courses/${id}`, course);
+    return this.http.put<Course>(`${this.apiUrl}/courses/${id}`, {
+      university: course.university,
+      city: course.city,
+      country: course.country,
+      course_name: course.course_name,
+      course_description: course.course_description,
+      start_date: course.start_date,
+      end_date: course.end_date,
+      price: course.price,
+      currency: course.currency,
+      _id: id,
+    });
   }
 
   deleteCourse(id: string): Observable<any> {
