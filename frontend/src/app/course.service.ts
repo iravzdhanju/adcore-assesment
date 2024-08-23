@@ -20,9 +20,11 @@ export interface Course {
   providedIn: 'root',
 })
 export class CourseService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.apiUrl = environment.apiUrl;
+  }
 
   getCourses(
     search?: string,
