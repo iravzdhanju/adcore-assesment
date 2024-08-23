@@ -1,17 +1,23 @@
-<header>
-  <h1>{{ title }}</h1>
-  <nav>
-    <ul>
-      <li><a routerLink="/courses">Courses</a></li>
-      <li><a routerLink="/courses/new">Add New Course</a></li>
-    </ul>
-  </nav>
-</header>
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="navbar">
+      <button mat-icon-button (click)="sidenav.toggle()" *ngIf="isHandset$ | async">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>{{ title }}</span>
+      <span class="spacer"></span>
+      <nav>
+        <a mat-button routerLink="/courses" routerLinkActive="active">Courses</a>
+        <a mat-button routerLink="/courses/new" routerLinkActive="active">Add New Course</a>
+      </nav>
+    </mat-toolbar>
 
-<main>
-  <router-outlet></router-outlet>
-</main>
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
 
-<!-- <footer>
-  <p>&copy; 2024 Course Management App</p>
-</footer> -->
+    <mat-toolbar class="footer">
+      <span>&copy; 2024 Course Management App</span>
+    </mat-toolbar>
+  </mat-sidenav-content>
+</mat-sidenav-container>
