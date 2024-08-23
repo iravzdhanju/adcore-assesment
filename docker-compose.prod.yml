@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      
+"8000:8000"
+  environment:
+MONGODB_USERNAME=${MONGODB_USERNAME}
+MONGODB_PASSWORD=${MONGODB_PASSWORD}
+restart: unless-stopped
+command: uvicorn main:app --host 0.0.0.0 --port 8000
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      
+"80:80"
+  restart: unless-stopped
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      
+MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
+MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+volumes:
+mongodb_data:/data/db
+restart: unless-stopped
+
+volumes:
+  mongodb_data:
+#!/bin/bash
+
+Load environment variables
+if [ -f .env ]; then
+    export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
+fi
+
+Check if required environment variables are set
+if [ -z "$MONGODB_USERNAME" ] || [ -z "$MONGODB_PASSWORD" ]; then
+    echo "Error: MONGODB_USERNAME and MONGODB_PASSWORD must be set in .env file"
+    exit 1
+fi
+
+Start the containers
+docker-compose -f docker-compose.yml up -d --build
+
+echo "Production environment started successfully"
