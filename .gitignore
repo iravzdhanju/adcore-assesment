@@ -7,7 +7,7 @@ frontend/bazel-out/
 
 frontend/npm-debug.log
 frontend/yarn-error.log
-
+frontend/.angular/
 frontend/.idea/
 frontend/.project
 frontend/.classpath
@@ -92,3 +92,5 @@ backend/.Spotlight-V100
 backend/.Trashes
 backend/ehthumbs.db
 backend/Thumbs.db
+backend/gh.py
+.env
