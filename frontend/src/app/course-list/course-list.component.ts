@@ -25,6 +25,7 @@ import {
   MatNativeDateModule,
   NativeDateAdapter,
 } from '@angular/material/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-course-list',
@@ -43,6 +44,7 @@ import {
     MatDatepickerModule,
     MatNativeDateModule,
     CourseEditDialogComponent,
+    MatTooltipModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
@@ -62,12 +64,12 @@ export class CourseListComponent implements OnInit {
   searchForm: FormGroup;
   filteredOptions: Observable<string[]>;
   displayedColumns: string[] = [
-    'university',
-    'course_name',
-    'start_date',
-    'end_date',
-    'price',
     'actions',
+    'course_name',
+    'university',
+    'start_date',
+    'length',
+    'price',
   ];
   editForm: FormGroup;
 
@@ -168,11 +170,20 @@ export class CourseListComponent implements OnInit {
             },
             error: (error) => {
               console.error('Error updating course:', error);
-              // Handle error (e.g., show an error message to the user)
             },
           });
       }
     });
+  }
+
+  getLengthOfDays(startDate: Date, endDate: Date): number {
+    if (startDate && endDate) {
+      const start = new Date(startDate).getTime();
+      const end = new Date(endDate).getTime();
+      const diff = Math.abs(end - start);
+      return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    }
+    return 0;
   }
 
   private _filter(value: string): string[] {
