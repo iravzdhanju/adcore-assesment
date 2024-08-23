@@ -1,59 +1,69 @@
 <h2>Create New Course</h2>
 
-<form (ngSubmit)="onSubmit()" #courseForm="ngForm">
+<form [formGroup]="courseForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
   <mat-form-field appearance="fill">
-    <mat-label>University</mat-label>
-    <input matInput [(ngModel)]="course.university" name="university" required>
+    <mat-label>Course Name</mat-label>
+    <input matInput formControlName="course_name">
   </mat-form-field>
 
   <mat-form-field appearance="fill">
-    <mat-label>City</mat-label>
-    <input matInput [(ngModel)]="course.city" name="city" required>
+    <mat-label>University</mat-label>
+    <input type="text" matInput formControlName="university" [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let university of filteredUniversities | async" [value]="university">
+        {{university}}
+      </mat-option>
+    </mat-autocomplete>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>Country</mat-label>
-    <input matInput [(ngModel)]="course.country" name="country" required>
+    <input matInput formControlName="country">
   </mat-form-field>
 
   <mat-form-field appearance="fill">
-    <mat-label>Course Name</mat-label>
-    <input matInput [(ngModel)]="course.course_name" name="course_name" required>
+    <mat-label>City</mat-label>
+    <input matInput formControlName="city">
   </mat-form-field>
+
+
+  <div class="price-currency-container">
+    <mat-form-field class="currency-field" appearance="fill">
+      <mat-label>Currency</mat-label>
+      <mat-select formControlName="currency">
+        <mat-option *ngFor="let currency of currencies" [value]="currency.code">
+          {{currency.code}} - {{currency.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="price-field" appearance="fill">
+      <mat-label>Price</mat-label>
+      <input matInput type="number" formControlName="price">
+    </mat-form-field>
+  </div>
 
   <mat-form-field appearance="fill">
-    <mat-label>Course Description</mat-label>
-    <textarea matInput [(ngModel)]="course.course_description" name="course_description" required></textarea>
-  </mat-form-field>
-
-   <mat-form-field appearance="fill">
     <mat-label>Start Date</mat-label>
-    <input matInput [matDatepicker]="startPicker" [(ngModel)]="course.start_date" name="start_date" required [min]="minDate">
+    <input matInput [matDatepicker]="startPicker" formControlName="start_date" [min]="minDate">
     <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
     <mat-datepicker #startPicker></mat-datepicker>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>End Date</mat-label>
-    <input matInput [matDatepicker]="endPicker" [(ngModel)]="course.end_date" name="end_date" required [min]="minDate">
+    <input matInput [matDatepicker]="endPicker" formControlName="end_date" [min]="minDate">
     <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
     <mat-datepicker #endPicker></mat-datepicker>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
-    <mat-label>Price</mat-label>
-    <input matInput type="number" [(ngModel)]="course.price" name="price" required>
+    <mat-label>Course Description</mat-label>
+    <textarea matInput formControlName="course_description"></textarea>
   </mat-form-field>
 
+  <button mat-raised-button color="primary" type="submit" [disabled]="!courseForm.valid">Create Course</button>
 
- <mat-form-field appearance="fill">
-  <mat-label>Currency</mat-label>
-  <mat-select [(ngModel)]="course.currency" name="currency" required>
-    <mat-option *ngFor="let currency of currencies" [value]="currency.code">
-      {{currency.code}} - {{currency.name}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
-  <button mat-raised-button color="primary" type="submit" [disabled]="!courseForm.form.valid">Create Course</button>
 </form>
+
+<div *ngIf="isLoading">Loading universities...</div>

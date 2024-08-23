@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 export interface Course {
   _id: string;
@@ -38,6 +38,14 @@ export class CourseService {
     return this.http.get<Course[]>(`${this.apiUrl}/courses`, { params });
   }
 
+  getUniversities(): Observable<string[]> {
+    return this.getCourses().pipe(
+      map((courses) => {
+        const universities = courses.map((course) => course.university);
+        return Array.from(new Set(universities));
+      })
+    );
+  }
   createCourse(course: Course): Observable<Course> {
     return this.http.post<Course>(`${this.apiUrl}/courses`, course);
   }
