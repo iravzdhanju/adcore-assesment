@@ -63,6 +63,7 @@ backend/*.sqlite3
 # Environment variables
 backend/.env
 
+
 # Compiled Python files
 backend/*.pyc
 
@@ -84,6 +85,8 @@ backend/.coverage.*
 backend/coverage.xml
 backend/*.cover
 
+
+
 # OS generated files
 backend/.DS_Store
 backend/.DS_Store?
@@ -93,4 +96,6 @@ backend/.Trashes
 backend/ehthumbs.db
 backend/Thumbs.db
 backend/gh.py
+
 .env
+.DS_Store
