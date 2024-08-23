@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
@@ -23,7 +23,14 @@ export class CourseService {
   private apiUrl: string;
 
   constructor(private http: HttpClient) {
-    this.apiUrl = environment.apiUrl;
+    this.apiUrl = this.getApiUrl();
+  }
+  private getApiUrl(): string {
+    if (isDevMode()) {
+      return 'http://localhost:8000'; // Development API URL
+    } else {
+      return environment.apiUrl; // Production API URL
+    }
   }
 
   getCourses(
