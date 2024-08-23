@@ -1,8 +1,8 @@
-<h2>Courses List</h2>
-
-<form [formGroup]="searchForm" (ngSubmit)="onSearch($event)">
-  <mat-form-field>
-    <input type="text" matInput formControlName="searchControl" [matAutocomplete]="auto" placeholder="Search courses">
+<form [formGroup]="searchForm" (ngSubmit)="onSearch($event)" class="search-form">
+  <mat-form-field appearance="outline" class="search-field">
+    <input type="text" matInput formControlName="searchControl" 
+           [matAutocomplete]="auto" placeholder="Search courses"
+           (keyup.enter)="onSearch($event)">
     <mat-autocomplete #auto="matAutocomplete">
       <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
         {{option}}
@@ -44,7 +44,7 @@
       <button mat-icon-button color="primary" (click)="editCourse(course)">
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-icon-button color="warn" (click)="deleteCourse(course.id)">
+      <button mat-icon-button color="warn" (click)="deleteCourse(course._id)">
         <mat-icon>delete</mat-icon>
       </button>
     </td>

@@ -1,13 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { MatSidenav } from '@angular/material/sidenav';
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -20,11 +23,14 @@ import { map, shareReplay } from 'rxjs/operators';
     MatButtonModule,
     MatSidenavModule,
     MatIconModule,
+    MatListModule,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+
   title = 'Course Management App';
   isHandset$: Observable<boolean>;
 

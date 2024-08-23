@@ -29,7 +29,6 @@ import {
 @Component({
   selector: 'app-course-list',
   standalone: true,
-
   imports: [
     CommonModule,
     ReactiveFormsModule,
