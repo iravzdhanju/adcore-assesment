@@ -11,7 +11,7 @@
       <button mat-icon-button (click)="sidenav.toggle()" *ngIf="isHandset$ | async">
         <mat-icon>menu</mat-icon>
       </button>
-      <a mat-button routerLink="/" class="title-link">{{ title }}</a> <!-- Added -->
+      <a mat-button routerLink="/" class="title-link">{{ title }}</a>
       <span class="spacer"></span>
       <nav *ngIf="!(isHandset$ | async)">
         <a mat-button routerLink="/courses" routerLinkActive="active">Courses</a>

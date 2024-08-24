@@ -81,7 +81,6 @@ class CourseInDB(Course):
 class Config:
     allow_population_by_field_name = True
 
-
 class CourseUpdate(BaseModel):
     university: str | None = None
     city: str | None = None
@@ -94,6 +93,18 @@ class CourseUpdate(BaseModel):
     currency: str | None = None
 
 # Helper functions
+def read_from_csv(file_path):
+    try:
+        df = pd.read_csv(file_path)
+        courses = df.to_dict('records')
+        for course in courses:
+            course['StartDate'] = datetime.strptime(course['StartDate'], '%Y-%m-%d')
+            course['EndDate'] = datetime.strptime(course['EndDate'], '%Y-%m-%d')
+        return courses
+    except Exception as e:
+        print(f"Error reading from CSV: {e}")
+        return None
+
 def fetch_and_update_data():
     try:
         url = "https://api.mockaroo.com/api/501b2790?count=100&key=8683a1c0"
@@ -104,12 +115,21 @@ def fetch_and_update_data():
         for course in courses:
             course['StartDate'] = datetime.strptime(course['StartDate'], '%Y-%m-%d')
             course['EndDate'] = datetime.strptime(course['EndDate'], '%Y-%m-%d')
+    except Exception as e:
+        print(f"Error fetching data from API: {e}")
+        print("Attempting to read from backup CSV...")
+        courses = read_from_csv('./data/UniversitySchema.csv')
+        if courses is None:
+            print("Failed to read from backup CSV")
+            return
+
+    try:
         courses_collection.delete_many({})
         result = courses_collection.insert_many(courses)
         print(f"Inserted {len(result.inserted_ids)} documents into 'courses' collection")
         courses_collection.create_index("timestamp", expireAfterSeconds=600)
     except Exception as e:
-        print(f"Error fetching and updating data: {e}")
+        print(f"Error updating database: {e}")
 
 def check_data_expiration():
     try:
@@ -176,7 +196,6 @@ async def get_courses(
         price=course["Price"],
         currency=course["Currency"]
     ) for course in courses]
-
 
 @app.put("/courses/{course_id}", response_model=CourseInDB, tags=["Courses"])
 async def update_course(course_id: str, course_update: CourseUpdate):

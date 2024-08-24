@@ -46,6 +46,24 @@ export class CourseService {
       })
     );
   }
+  getCities(): Observable<string[]> {
+    return this.getCourses().pipe(
+      map((courses) => {
+        const city = courses.map((course) => course.city);
+        return Array.from(new Set(city));
+      })
+    );
+  }
+  
+  getCountry(): Observable<string[]> {
+    return this.getCourses().pipe(
+      map((courses) => {
+        const country = courses.map((course) => course.country);
+        return Array.from(new Set(country));
+      })
+    );
+  }
+  
   createCourse(course: Course): Observable<Course> {
     return this.http.post<Course>(`${this.apiUrl}/courses`, course);
   }
